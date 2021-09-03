@@ -1,7 +1,7 @@
 /**
  * Created By Ray.Jiang on 2021/09/02
  * 229135609@qq.com
- * 参考https://docs.oracle.com/javase/specs/jvms/se12/html/jvms-4.html#jvms-4.4.5
+ * 参考https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html
  * */
 #ifndef JVM_DATA_STRUCTS
 #define JVM_DATA_STRUCTS
@@ -66,10 +66,10 @@ enum CONSTANT_TYPE {
     CONSTANT_Utf8 = 1,
     CONSTANT_MethodHandle = 15,
     CONSTANT_MethodType = 16,
-    CONSTANT_Dynamic = 17,
+    //CONSTANT_Dynamic = 17,
     CONSTANT_InvokeDynamic = 18,
-    CONSTANT_Module = 19,
-    CONSTANT_Package = 20,
+    //CONSTANT_Module = 19,
+    //CONSTANT_Package = 20,
 };
 
 struct CONSTANT_Class_info
@@ -148,19 +148,17 @@ struct CONSTANT_Long_info {
  * First let temp = ((long) high_bytes << 32) + low_bytes
  * Then:
 
-If bits is 0x7ff0000000000000L, the double value will be positive infinity.
+        If bits is 0x7ff0000000000000L, the double value will be positive infinity.
 
-If bits is 0xfff0000000000000L, the double value will be negative infinity.
+        If bits is 0xfff0000000000000L, the double value will be negative infinity.
 
-If bits is in the range 0x7ff0000000000001L through 0x7fffffffffffffffL or in the range 0xfff0000000000001L through 0xffffffffffffffffL, the double value will be NaN.
+        If bits is in the range 0x7ff0000000000001L through 0x7fffffffffffffffL or in the range 0xfff0000000000001L through 0xffffffffffffffffL, the double value will be NaN.
 
-In all other cases, let s, e, and m be three values that might be computed from bits:
+        In all other cases, let s, e, and m be three values that might be computed from bits:
 
-int s = ((bits >> 63) == 0) ? 1 : -1;
-int e = (int)((bits >> 52) & 0x7ffL);
-long m = (e == 0) ?
-           (bits & 0xfffffffffffffL) << 1 :
-           (bits & 0xfffffffffffffL) | 0x10000000000000L;
+        int s = ((bits >> 63) == 0) ? 1 : -1;
+        int e = (int)((bits >> 52) & 0x7ffL);
+        long m = (e == 0) ? (bits & 0xfffffffffffffL) << 1 : (bits & 0xfffffffffffffL) | 0x10000000000000L;
 	  
 Then the floating-point value equals the double value of the mathematical expression s · m · 2e-1075.
  **/
@@ -168,6 +166,21 @@ struct CONSTANT_Double_info {
     u1 tag = CONSTANT_Double;
     u4 high_bytes;
     u4 low_bytes;
+};
+
+// Just used to refer to
+enum Filed_Descriptor {
+    B = 'B', //signed byte
+    C = 'C', //Unicode character code point in the Basic Multilingual Plane, encoded with UTF-16
+    D = 'D', //double
+    F = 'F', //float
+    I = 'I', //int
+    J = 'J', //long
+    S = 'S', //signed short
+    Z = 'Z', // boolean
+    ObjectType = 'L..;', //对象
+
+    ArrayType = '[' //数组
 };
 
 struct CONSTANT_NameAndType_info {
@@ -206,53 +219,133 @@ struct CONSTANT_MethodType_info {
     u2 descriptor_index; //The constant_pool entry at that index must be a CONSTANT_Utf8_info structure (§4.4.7) representing a method descriptor
 };
 
-//https://docs.oracle.com/javase/specs/jvms/se12/html/jvms-4.html#jvms-4.4.10
-struct CONSTANT_Dynamic_info {
-    u1 tag = CONSTANT_Dynamic;
-    u2 bootstrap_method_attr_index;
-    u2 name_and_type_index;
-};
+//https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.4.10
+// struct CONSTANT_Dynamic_info {
+//     u1 tag = CONSTANT_Dynamic;
+//     u2 bootstrap_method_attr_index;
+//     u2 name_and_type_index;
+// };
 
 struct CONSTANT_InvokeDynamic_info {
     u1 tag = CONSTANT_InvokeDynamic;
-    u2 bootstrap_method_attr_index;
+    u2 bootstrap_method_attr_index; //索引指向the bootstrap_methods array of the bootstrap method table
     u2 name_and_type_index;
 };
 
 //从Java 9开始，JDK引入了模块（Module
 //represent a module
-struct CONSTANT_Module_info {
-    u1 tag = CONSTANT_Module;
-    u2 name_index;
+// struct CONSTANT_Module_info {
+//     u1 tag = CONSTANT_Module;
+//     u2 name_index;
+// };
+
+// //represent a package exported or opened by a module
+// struct CONSTANT_Package_info {
+//     u1 tag = CONSTANT_Package;
+//     u2 name_index;
+// };
+enum Method_Access_Flag {
+    ACC_PUBLIC    = 0x0001,
+    ACC_PRIVATE   = 0x0002,
+    ACC_PROTECTED = 0x0004,
+    ACC_STATIC    = 0x0008,
+    ACC_FINAL     = 0x0010,
+    ACC_SYNCHRONIZED = 0x0020,
+    ACC_BRIDGE  = 0x0040, //桥接方法
+    ACC_VARARGS = 0x0080, //可变参数
+    ACC_NATIVE = 0x0100, //native方法
+    ACC_ABSTRACT      = 0x0400,
+    ACC_STRICT = 0x0800, //精确浮点  strictfp 关键字可应用于类、接口或方法。
+    ACC_SYNTHETIC = 0x1000, //编译器自动生成，对Java源码来说是不可见的，但可以通过反射调用
 };
 
-//represent a package exported or opened by a module
-struct CONSTANT_Package_info {
-    u1 tag = CONSTANT_Package;
-    u2 name_index;
+enum Field_Access_Flag {
+    ACC_PUBLIC    = 0x0001,
+    ACC_PRIVATE   = 0x0002,
+    ACC_PROTECTED = 0x0004,
+    ACC_STATIC    = 0x0008,
+    ACC_FINAL     = 0x0010,
+    ACC_VOLATILE  = 0x0040,
+    ACC_TRANSIENT = 0x0080,
+    ACC_SYNTHETIC = 0x1000,
+    ACC_ENUM      = 0x4000,
 };
+/**
+ * Table 4.5-A. Field access and property flags
 
-//TODO 增加注释
+    Flag Name	    Value	Interpretation
+    ACC_PUBLIC	    0x0001	Declared public; may be accessed from outside its package.
+    ACC_PRIVATE	    0x0002	Declared private; usable only within the defining class.
+    ACC_PROTECTED	0x0004	Declared protected; may be accessed within subclasses.
+    ACC_STATIC	    0x0008	Declared static.
+    ACC_FINAL	    0x0010	Declared final; never directly assigned to after object construction (JLS §17.5).
+    ACC_VOLATILE	0x0040	Declared volatile; cannot be cached.
+    ACC_TRANSIENT	0x0080	Declared transient; not written or read by a persistent object manager.
+    ACC_SYNTHETIC	0x1000	Declared synthetic; not present in the source code.
+    ACC_ENUM	    0x4000	Declared as an element of an enum.
+ * */
 struct field_info {
-    u2             access_flags;
-    u2             name_index;
-    u2             descriptor_index;
-    u2             attributes_count;
+    u2             access_flags; //访问限制
+    u2             name_index; //名字索引
+    u2             descriptor_index; // 指向类型签名的索引。 类型签名 eg. Ljava/lang/Thread;
+    u2             attributes_count; //额外的属性数量
     attribute_info attributes[0];
 };
 
-//TODO 增加注释
 struct method_info {
     u2             access_flags;
     u2             name_index;
-    u2             descriptor_index;
+    u2             descriptor_index; // 指向方法签名的索引。方法签名 eg.(IDLjava/lang/Thread;)Ljava/lang/Object;
     u2             attributes_count;
     attribute_info attributes[0];
 };
 
-//TODO 增加注释
+/**
+ *  Table 4.7-C. Predefined class file attributes (by location)
+
+    Attribute	                                                                Location	class file
+
+    SourceFile	                                                                ClassFile	45.3
+    InnerClasses	                                                            ClassFile	45.3
+    EnclosingMethod	                                                            ClassFile	49.0
+    SourceDebugExtension                                                    	ClassFile	49.0
+    BootstrapMethods                                                        	ClassFile	51.0
+    ConstantValue                                                           	field_info	45.3
+    Code	                                                                    method_info	45.3
+    Exceptions	                                                                method_info	45.3
+    RuntimeVisibleParameterAnnotations, RuntimeInvisibleParameterAnnotations	method_info	49.0
+    AnnotationDefault	                                                        method_info	49.0
+    MethodParameters	                                                        method_info	52.0
+    Synthetic	                                                                ClassFile, field_info, method_info	45.3
+    Deprecated	                                                                ClassFile, field_info, method_info	45.3
+    Signature	                                                                ClassFile, field_info, method_info	49.0
+    RuntimeVisibleAnnotations, RuntimeInvisibleAnnotations	                    ClassFile, field_info, method_info	49.0
+    LineNumberTable	                                                            Code	45.3
+    LocalVariableTable	                                                        Code	45.3
+    LocalVariableTypeTable	                                                    Code	49.0
+    StackMapTable	                                                            Code	50.0
+    RuntimeVisibleTypeAnnotations, RuntimeInvisibleTypeAnnotations	            ClassFile, field_info, method_info, Code	52.0
+ * 
+ **/
 struct attribute_info {
     u2 attribute_name_index;
     u4 attribute_length;
     u1 info[0];
 };
+
+struct Code_attribute {
+    u2 attribute_name_index;
+    u4 attribute_length;
+    u2 max_stack;
+    u2 max_locals;
+    u4 code_length;
+    u1 code[0];
+    u2 exception_table_length;
+    {   u2 start_pc;
+        u2 end_pc;
+        u2 handler_pc;
+        u2 catch_type;
+    } exception_table[exception_table_length];
+    u2 attributes_count;
+    attribute_info attributes[0];
+}
