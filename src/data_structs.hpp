@@ -11,43 +11,11 @@ typedef  unsigned int u4;
 typedef  unsigned int u2;
 typedef  unsigned char u1;
 
-struct Class_File_Format
-{
-    u4 magic_number; // 魔术0xcafebabe
-
-    u2 minor_version;
-    u2 major_version;
-
-    u2 constant_pool_count; //常量个数
-
-    cp_info constant_pool[0]; //常量池
-
-    u2 access_flags; //访问权限标志
-
-    u2 this_class; //当前类的类名
-    u2 super_class; //父类类名
-
-    u2 interface_cout;
-
-    u2* interfaces;
-
-    u2 field_count;
-    field_info fields[0];
-
-    u2 methods_count;
-    method_info methods[0];
-
-    u2 attributes_count;
-    attribute_info attributes[0];
-};
-
-
 struct cp_info
 {
     u1 tag;  // 常量值类型
     u1 info[0]; //Each tag byte must be followed by two or more bytes giving information about the specific constant
 };
-
 
 /**
  * 不同java版本支持的类型有区别 待处理
@@ -260,16 +228,23 @@ enum Method_Access_Flag {
 };
 
 enum Field_Access_Flag {
-    ACC_PUBLIC    = 0x0001,
-    ACC_PRIVATE   = 0x0002,
-    ACC_PROTECTED = 0x0004,
-    ACC_STATIC    = 0x0008,
-    ACC_FINAL     = 0x0010,
-    ACC_VOLATILE  = 0x0040,
-    ACC_TRANSIENT = 0x0080,
-    ACC_SYNTHETIC = 0x1000,
-    ACC_ENUM      = 0x4000,
+    FIELD_ACC_PUBLIC    = 0x0001,
+    FIELD_ACC_PRIVATE   = 0x0002,
+    FIELD_ACC_PROTECTED = 0x0004,
+    FIELD_ACC_STATIC    = 0x0008,
+    FIELD_ACC_FINAL     = 0x0010,
+    FIELD_ACC_VOLATILE  = 0x0040,
+    FIELD_ACC_TRANSIENT = 0x0080,
+    FIELD_ACC_SYNTHETIC = 0x1000,
+    FIELD_ACC_ENUM      = 0x4000,
 };
+
+struct attribute_info {
+    u2 attribute_name_index;
+    u4 attribute_length;
+    u1 info[0];
+};
+
 /**
  * Table 4.5-A. Field access and property flags
 
@@ -327,10 +302,13 @@ struct method_info {
     RuntimeVisibleTypeAnnotations, RuntimeInvisibleTypeAnnotations	            ClassFile, field_info, method_info, Code	52.0
  * 
  **/
-struct attribute_info {
-    u2 attribute_name_index;
-    u4 attribute_length;
-    u1 info[0];
+
+struct exception_table
+{
+    u2 start_pc;
+    u2 end_pc;
+    u2 handler_pc;
+    u2 catch_type;
 };
 
 struct Code_attribute {
@@ -341,11 +319,38 @@ struct Code_attribute {
     u4 code_length;
     u1 code[0];
     u2 exception_table_length;
-    {   u2 start_pc;
-        u2 end_pc;
-        u2 handler_pc;
-        u2 catch_type;
-    } exception_table[exception_table_length];
+    exception_table exception_table[0];
     u2 attributes_count;
     attribute_info attributes[0];
-}
+};
+
+
+struct Class_File_Format
+{
+    u4 magic_number; // 魔术0xcafebabe
+
+    u2 minor_version;
+    u2 major_version;
+
+    u2 constant_pool_count; //常量个数
+
+    cp_info constant_pool[0]; //常量池
+
+    u2 access_flags; //访问权限标志
+
+    u2 this_class; //当前类的类名
+    u2 super_class; //父类类名
+
+    u2 interface_cout;
+
+    u2* interfaces;
+
+    u2 field_count;
+    field_info fields[0];
+
+    u2 methods_count;
+    method_info methods[0];
+
+    u2 attributes_count;
+    attribute_info attributes[0];
+};
