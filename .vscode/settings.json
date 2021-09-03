@@ -1,3 +1,16 @@
 {
-    "C_Cpp.errorSquiggles": "Enabled"
+    "C_Cpp.errorSquiggles": "Enabled",
+    "files.associations": {
+        "*.java": "java",
+        "fstream": "cpp",
+        "locale": "cpp",
+        "istream": "cpp",
+        "__functional_base": "cpp",
+        "memory": "cpp",
+        "tuple": "cpp",
+        "utility": "cpp",
+        "iostream": "cpp",
+        "algorithm": "cpp",
+        "iosfwd": "cpp"
+    }
 }

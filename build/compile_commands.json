@@ -1,0 +1,12 @@
+[
+{
+  "directory": "/Users/ray/Codes/MiniJVM/build/src",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++  -I/Users/ray/Codes/MiniJVM/src/../include -O3 -DNDEBUG -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk -o CMakeFiles/../MiniJvm.exe.dir/ByteCodeInterpreter.cpp.o -c /Users/ray/Codes/MiniJVM/src/ByteCodeInterpreter.cpp",
+  "file": "/Users/ray/Codes/MiniJVM/src/ByteCodeInterpreter.cpp"
+},
+{
+  "directory": "/Users/ray/Codes/MiniJVM/build/src",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++  -I/Users/ray/Codes/MiniJVM/src/../include -O3 -DNDEBUG -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk -o CMakeFiles/../MiniJvm.exe.dir/Test.cpp.o -c /Users/ray/Codes/MiniJVM/src/Test.cpp",
+  "file": "/Users/ray/Codes/MiniJVM/src/Test.cpp"
+}
+]

@@ -1,0 +1,5 @@
+/Users/ray/Codes/MiniJVM/build/CMakeFiles/rebuild_cache.dir
+/Users/ray/Codes/MiniJVM/build/CMakeFiles/edit_cache.dir
+/Users/ray/Codes/MiniJVM/build/src/CMakeFiles/rebuild_cache.dir
+/Users/ray/Codes/MiniJVM/build/src/CMakeFiles/edit_cache.dir
+/Users/ray/Codes/MiniJVM/build/src/CMakeFiles/../MiniJvm.exe.dir

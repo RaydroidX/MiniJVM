@@ -5,7 +5,6 @@
  * */
 #ifndef JVM_DATA_STRUCTS
 #define JVM_DATA_STRUCTS
-#endif
 
 typedef  unsigned int u4;
 typedef  unsigned int u2;
@@ -354,3 +353,6 @@ struct Class_File_Format
     u2 attributes_count;
     attribute_info attributes[0];
 };
+
+
+#endif
