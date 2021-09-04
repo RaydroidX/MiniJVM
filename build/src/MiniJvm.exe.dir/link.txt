@@ -1,1 +1,0 @@
-/Library/Developer/CommandLineTools/usr/bin/c++ -O3 -DNDEBUG -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX11.3.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names CMakeFiles/../MiniJvm.exe.dir/ByteCodeInterpreter.cpp.o CMakeFiles/../MiniJvm.exe.dir/Test.cpp.o -o ../MiniJvm.exe 

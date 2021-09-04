@@ -6,9 +6,7 @@
 #ifndef JVM_DATA_STRUCTS
 #define JVM_DATA_STRUCTS
 
-typedef  unsigned int u4;
-typedef  unsigned int u2;
-typedef  unsigned char u1;
+#include "bytes_x86.hpp"
 
 struct cp_info
 {
@@ -244,6 +242,11 @@ struct attribute_info {
     u1 info[0];
 };
 
+struct attributes_info {
+    u2             attributes_count; //额外的属性数量
+    attribute_info attributes[0];
+};
+
 /**
  * Table 4.5-A. Field access and property flags
 
@@ -262,16 +265,14 @@ struct field_info {
     u2             access_flags; //访问限制
     u2             name_index; //名字索引
     u2             descriptor_index; // 指向类型签名的索引。 类型签名 eg. Ljava/lang/Thread;
-    u2             attributes_count; //额外的属性数量
-    attribute_info attributes[0];
+    attributes_info attributes_table;
 };
 
 struct method_info {
     u2             access_flags;
     u2             name_index;
     u2             descriptor_index; // 指向方法签名的索引。方法签名 eg.(IDLjava/lang/Thread;)Ljava/lang/Object;
-    u2             attributes_count;
-    attribute_info attributes[0];
+    attributes_info attributes_table;
 };
 
 /**
@@ -310,19 +311,45 @@ struct exception_table
     u2 catch_type;
 };
 
+struct code_info {
+    u4 code_length;
+    u1 code[0];
+};
+
+struct exception_info {
+    u2 exception_table_length;
+    exception_table exception_table[0];
+};
+
 struct Code_attribute {
     u2 attribute_name_index;
     u4 attribute_length;
     u2 max_stack;
     u2 max_locals;
-    u4 code_length;
-    u1 code[0];
-    u2 exception_table_length;
-    exception_table exception_table[0];
-    u2 attributes_count;
-    attribute_info attributes[0];
+    code_info code_info;
+    exception_info exception_info;
+    attributes_info attributes_table;
 };
 
+struct constants_info {
+    u2 constant_pool_count; //常量个数
+    cp_info constant_pool[0]; //常量池
+};
+
+struct fields_info {
+    u2 field_count;
+    field_info fields[0];
+};
+
+struct methods_info {
+    u2 methods_count;
+    method_info methods[0];
+};
+
+struct interfaces_info {
+    u2 interface_cout;
+    u2 interfaces[0];
+};
 
 struct Class_File_Format
 {
@@ -331,27 +358,18 @@ struct Class_File_Format
     u2 minor_version;
     u2 major_version;
 
-    u2 constant_pool_count; //常量个数
-
-    cp_info constant_pool[0]; //常量池
+    constants_info constant_info;
 
     u2 access_flags; //访问权限标志
 
     u2 this_class; //当前类的类名
     u2 super_class; //父类类名
 
-    u2 interface_cout;
+    interfaces_info interfaces_info;
 
-    u2* interfaces;
+    fields_info field_infos;
 
-    u2 field_count;
-    field_info fields[0];
-
-    u2 methods_count;
-    method_info methods[0];
-
-    u2 attributes_count;
-    attribute_info attributes[0];
+    attributes_info attributes_info;
 };
 
 

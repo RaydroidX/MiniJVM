@@ -1,42 +1,31 @@
 #ifndef _Utils
 #define _Utils
 
-#include "data_structs.hpp"
-
-int isBigEnd();
-void use_endianSwap(u1 *pData);
-void endianSwap(u1 *pData, int startIndex, int length);
-
-
-//大端转小端
-void endianSwap(u1 *pData, int startIndex, int length) {
-    int i, cnt, end, start;
-    cnt = length / 2;
-    start = startIndex;
-    end  = startIndex + length - 1;
-    u1 tmp;
-    for (i = 0; i < cnt; i++) {
-        tmp            = pData[start + i];
-        pData[start + i] = pData[end - i];
-        pData[end - i]   = tmp;
-    }
-}
-void use_endianSwap(u1 *pData) {
-    for (int i = 0; i < 4; i += 4) {
-        endianSwap(pData, i, 4);
-    }
-}
-
-union w
- {
-  int a;  //4 bytes
-  char b; //1 byte
- } c;
-
-int isBigEnd()
+char* readFileToBuffer(char* path)
 {
-  c.a = 1;
-  return c.b != 1;
+    filebuf *pbuf;
+    ifstream filestr;
+    long size;
+    char * buffer;
+    // 要读入整个文件，必须采用二进制打开 
+    filestr.open (path, ios::binary);
+    // 获取filestr对应buffer对象的指针 
+    pbuf=filestr.rdbuf();
+    
+    // 调用buffer对象方法获取文件大小
+    size=pbuf->pubseekoff (0,ios::end,ios::in);
+    pbuf->pubseekpos (0,ios::in);
+    
+    // 分配内存空间
+    buffer=new char[size];
+    
+    // 获取文件内容
+    pbuf->sgetn (buffer,size);
+    buffer[size-1]='\0';
+    
+    filestr.close();
+
+    return buffer;
 }
 
 #endif

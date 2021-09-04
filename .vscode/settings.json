@@ -11,6 +11,11 @@
         "utility": "cpp",
         "iostream": "cpp",
         "algorithm": "cpp",
-        "iosfwd": "cpp"
+        "iosfwd": "cpp",
+        "ostream": "cpp",
+        "ios": "cpp",
+        "vector": "cpp",
+        "iterator": "cpp",
+        "streambuf": "cpp"
     }
 }
